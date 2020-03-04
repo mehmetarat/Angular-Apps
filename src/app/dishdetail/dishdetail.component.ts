@@ -22,10 +22,12 @@ export class DishdetailComponent implements OnInit {
     constructor(private dishservice: DishService,
         private route: ActivatedRoute,
         private location: Location) { }
+
     // ngOnInit() {
     //     let id = this.route.snapshot.params['id'];
     //     this.dishservice.getDish(id).then(dish => this.dish = dish);
     // }
+
     ngOnInit() {
         this.dishservice.getDishIds().subscribe(dishIds => this.dishIds = dishIds);
         this.route.params.pipe(switchMap((params: Params) => this.dishservice.getDish(params['id'])))
