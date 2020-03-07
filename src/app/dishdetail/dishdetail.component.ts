@@ -15,14 +15,17 @@ import { Comment } from '../shared/comment';
 export class DishdetailComponent implements OnInit {
 
     dish: Dish;
+    dishcopy: Dish;
     dishIds: string[];
     prev: string;
     next: string;
     commentForm: FormGroup;
     comment: Comment;
+    errMess: string;
+
     @ViewChild('cform') commentFormDirective;
 
-    constructor(private dishservice: DishService,
+    constructor(private dishService: DishService,
         private route: ActivatedRoute,
         private location: Location,
         private fb: FormBuilder,
@@ -47,9 +50,11 @@ export class DishdetailComponent implements OnInit {
     };
 
     ngOnInit() {
-        this.dishservice.getDishIds().subscribe(dishIds => this.dishIds = dishIds);
-        this.route.params.pipe(switchMap((params: Params) => this.dishservice.getDish(params['id'])))
-            .subscribe(dish => { this.dish = dish; this.setPrevNext(dish.id); });
+        this.dishService.getDishIds().subscribe(dishIds => this.dishIds = dishIds);
+        this.route.params
+            .pipe(switchMap((params: Params) => this.dishService.getDish(params['id'])))
+            .subscribe(dish => { this.dish = dish; this.dishcopy = dish; this.setPrevNext(dish.id); },
+                errmess => this.errMess = <any>errmess);
     }
 
     setPrevNext(dishId: string) {
@@ -100,15 +105,21 @@ export class DishdetailComponent implements OnInit {
         var d = new Date();
         var n = d.toISOString();
         this.comment.date = n;
-        this.dish.comments.push(this.comment);
-        console.log(this.comment);
+
+        this.dishcopy.comments.push(this.comment);
+        this.dishService.putDish(this.dishcopy)
+            .subscribe(dish => {
+                this.dish = dish; this.dishcopy = dish;
+            },
+                errmess => { this.dish = null; this.dishcopy = null; this.errMess = <any>errmess; });
 
         this.commentFormDirective.resetForm();
-
         this.commentForm.reset({
             author: '',
             rating: 5,
             comment: ''
         });
+        console.log(this.comment);
     }
+
 }
