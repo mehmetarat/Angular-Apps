@@ -16,8 +16,6 @@ body {
     display: flex;
 }
 
-
-
 $lt-gray: #ddd;
 $background-dark: #512DA8;
 $background-light: #9575CD;
@@ -53,4 +51,11 @@ $background-moredark: #4527A0;
 
 .active {
     background: $background-moredark;
+}
+
+.highlight {
+  background-color: $background-pale;
+  border: 1px solid $primary-color-dark;
+  z-index: 1;
+  transform: scale(1.01);
 }
